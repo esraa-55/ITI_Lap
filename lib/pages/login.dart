@@ -6,6 +6,7 @@
 
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'mainscreen.dart';
 // import 'package:flutter_application_firstt/pages/signup.dart';
@@ -13,14 +14,14 @@ import 'mainscreen.dart';
 
 // import 'welcome.dart';
 
-class Welcome extends StatefulWidget {
-  const Welcome ({super.key});
+class Login extends StatefulWidget {
+  const Login ({super.key});
 
   @override
-  State <Welcome> createState() =>  _WelcomeState();
+  State <Login> createState() =>  _LoginState();
 }
 
-class  _WelcomeState extends State <Welcome > {
+class  _LoginState extends State <Login > {
 
 final _formKey = GlobalKey<FormState>();
 TextEditingController emailcontroller = TextEditingController();
@@ -85,8 +86,10 @@ TextEditingController emailcontroller = TextEditingController();
                        ),
                   
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if(_formKey.currentState!.validate()){
+                              final SharedPreferences prefs = await SharedPreferences.getInstance();
+                              await prefs.setString('email', emailcontroller.text);
                               Navigator.push(context,MaterialPageRoute(builder: (context){
                                 return Mainscreen(email:emailcontroller.text,);
                               

@@ -3,6 +3,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Mainscreen extends StatefulWidget {
   String email;
@@ -14,6 +15,14 @@ class Mainscreen extends StatefulWidget {
 }
 
 class _Mainscreen extends State<Mainscreen > {
+ 
+ String Email = "";
+ getcachedEmail() async
+ {
+
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  Email= prefs.getString("email") ?? '--';
+ }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,15 +50,15 @@ class _Mainscreen extends State<Mainscreen > {
       ),
       body: Center(child:
        Text(widget.email, style: TextStyle(color: Colors.blue, fontSize: 35),
-
-       
-    
-    
     ) ,),
-
-
-
-
+    
+     
     );
+
+
+
+
+
+  
   }
 }
