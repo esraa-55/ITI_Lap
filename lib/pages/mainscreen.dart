@@ -1,9 +1,12 @@
 
 
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, must_be_immutable
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, must_be_immutable, unused_element
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_application_firstt/pages/account.dart';
+import 'package:flutter_application_firstt/pages/chat.dart';
+import 'package:flutter_application_firstt/pages/home.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 
 class Mainscreen extends StatefulWidget {
   String email;
@@ -12,45 +15,84 @@ class Mainscreen extends StatefulWidget {
 
   @override
   State<Mainscreen > createState() => _Mainscreen();
+  
 }
 
 class _Mainscreen extends State<Mainscreen > {
- 
- String Email = "";
- getcachedEmail() async
- {
 
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  Email= prefs.getString("email") ?? '--';
- }
+  int _currentIndex = 0;
+  final screen = [
+    HomeScreen(),
+    ChatScreen(),
+    AccountScreen(),
+  ];
+
+  
+ 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Home",
         style: 
-               TextStyle( color: Colors.white),
+               TextStyle( color: Colors.white, ), 
                ),
+               backgroundColor: Colors.purple,
         centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-             onPressed: (){},
-          ),
+        // leading: IconButton(
+        //   icon: Icon(Icons.menu),
+        //      onPressed: (){},
+        //   ),
         actions: [
           IconButton(
           icon: Icon(Icons.search),
              onPressed: (){},
           ),
           IconButton(
-          icon: Icon(Icons.comment),
+          icon: Icon(Icons.settings),
              onPressed: (){},   
           )
         ], 
       
       ),
-      body: Center(child:
-       Text(widget.email, style: TextStyle(color: Colors.blue, fontSize: 35),
-    ) ,),
+      body: screen[_currentIndex],
+    //   Center(child:
+    //    Text(widget.email, style: TextStyle(color: Colors.blue, fontSize: 35),
+    // ) ,),
+
+    bottomNavigationBar: GNav(
+     
+    selectedIndex: _currentIndex,
+        onTabChange: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+
+      backgroundColor: Colors.purple,
+      color:Colors.white,
+      activeColor: Color.fromARGB(255, 133, 87, 141),
+      tabBackgroundColor: Color.fromARGB(255, 219, 170, 228),
+      tabs: [
+        GButton(
+        icon: Icons.home,
+        text: "Home", 
+        ),
+        
+        GButton(
+        icon: Icons.chat,
+        text:"Chat",
+              ),
+
+        
+        GButton(
+          icon: Icons.account_circle,
+          text:"Account"),
+        
+        
+      ]
+      ),
     
      
     );
