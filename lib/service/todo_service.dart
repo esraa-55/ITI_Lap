@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_application_firstt/model/todo_model.dart';
-
-
 class Todo {
   String url = "https://jsonplaceholder.typicode.com/todos";
 

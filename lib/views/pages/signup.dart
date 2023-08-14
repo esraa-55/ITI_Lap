@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last, body_might_complete_normally_nullable
 
 import 'package:flutter/material.dart';
-import 'package:flutter_application_firstt/pages/login.dart';
+import 'package:flutter_application_firstt/views/pages/login.dart';
 
 
 class SignUp extends StatefulWidget {
