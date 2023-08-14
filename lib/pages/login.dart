@@ -6,6 +6,7 @@
 
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_firstt/pages/signup.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -124,7 +125,11 @@ TextEditingController emailcontroller = TextEditingController();
                         Padding(
                           padding:  EdgeInsets.all(30.0),
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                             Navigator.push(context, MaterialPageRoute(builder: (context){
+                              return SignUp();
+                             }));
+                            },
                             
                             child: Text(
                               'No Account? Sign Up',
