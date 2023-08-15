@@ -5,6 +5,7 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last, body_might_complete_normally_nullable
 
 // import 'package:flutter/cupertino.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_firstt/views/pages/signup.dart';
 
@@ -27,6 +28,7 @@ class  _LoginState extends State <Login > {
 
 final _formKey = GlobalKey<FormState>();
 TextEditingController emailcontroller = TextEditingController();
+TextEditingController passwordcontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -74,13 +76,14 @@ TextEditingController emailcontroller = TextEditingController();
                        Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: TextFormField(
+                              controller: passwordcontroller,
                             decoration: const InputDecoration(labelText: "Password",
                             prefixIcon: Icon(Icons.lock)),
                             style: const TextStyle(color: Colors.purple),
                             obscureText: true,
                             obscuringCharacter: "*",
                             validator: (value) {
-                              if(value==null || value.length <=10){
+                              if(value==null || value.length <=6){
                                 return "Enter the password";
                               }
                             },
@@ -90,16 +93,38 @@ TextEditingController emailcontroller = TextEditingController();
                         ElevatedButton(
                           onPressed: () async {
                             if(_formKey.currentState!.validate()){
-                              final SharedPreferences prefs = await SharedPreferences.getInstance();
+                            bool result =  await FirebaseLogin(emailcontroller.text,passwordcontroller.text);
+                              if(result==true){
+                                 final SharedPreferences prefs = await SharedPreferences.getInstance();
                               await prefs.setString('email', emailcontroller.text);
                               Navigator.push(context,MaterialPageRoute(builder: (context){
-                                return Mainscreen(email:emailcontroller.text,);
+                                    return Mainscreen(email:emailcontroller.text,);
                               
                                     }));
 
+                              }
+                                 else{
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("Error, please Enter the valid email& password"))
+                                );
+                                 }
+                        
+                             
+
+
+                              // final SharedPreferences prefs = await SharedPreferences.getInstance();
+                              // await prefs.setString('email', emailcontroller.text);
+                              // Navigator.push(context,MaterialPageRoute(builder: (context){
+                              //   return Mainscreen(email:emailcontroller.text,);
+                              
+                              //       }));
+
                             }
+                             
+                              
                             
                           },
+                          
                           child:  Text(
                             'Login',
                             style: TextStyle(color: Colors.white),
@@ -170,6 +195,24 @@ TextEditingController emailcontroller = TextEditingController();
         ),
       )),
     );
+  }
+  Future<bool>FirebaseLogin(String email, String password)async{
+    try  {
+  UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+    email: email,
+    password: password,
+  );
+  if(userCredential.user !=null){
+    return true;
+  }
+} on FirebaseAuthException catch (e) {
+  if (e.code == 'user-not-found') {
+    print('No user found for that email.');
+  } else if (e.code == 'wrong-password') {
+    print('Wrong password provided for that user.');
+  }
+}
+return false;
   }
   
 }

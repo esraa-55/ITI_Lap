@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last, body_might_complete_normally_nullable
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_firstt/views/pages/login.dart';
-
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -15,7 +15,7 @@ class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
   bool insecurepass = true;
   TextEditingController emailcontroller = TextEditingController();
-  TextEditingController passlcontroller = TextEditingController();
+  TextEditingController passcontroller = TextEditingController();
   TextEditingController confirmpasscontroller = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,7 @@ class _SignUpState extends State<SignUp> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
-                    controller: passlcontroller,
+                    controller: passcontroller,
                     decoration: InputDecoration(
                       labelText: "Password",
                       prefixIcon: Icon(Icons.lock),
@@ -89,7 +89,7 @@ class _SignUpState extends State<SignUp> {
                     obscureText: insecurepass,
                     obscuringCharacter: "*",
                     validator: (value) {
-                      if (value == null || value.length <= 10) {
+                      if (value == null || value.length <= 6) {
                         return "Enter Valid Password";
                       }
                     },
@@ -112,7 +112,7 @@ class _SignUpState extends State<SignUp> {
                     validator: (value) {
                       if (value == null) {
                         return "Enter Valid password";
-                      } else if (value != passlcontroller.text) {
+                      } else if (value != passcontroller.text) {
                         return " password mismatch";
                       }
                     },
@@ -121,15 +121,37 @@ class _SignUpState extends State<SignUp> {
                 Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return Login();
-                          }));
+                      onPressed: () async {
+                 
+                        
+
+                        if (_formKey.currentState!.validate()) { 
+                           bool result =  await register(emailcontroller.text,passcontroller.text);
+                              if(result==true){
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("Successful registration")));
+
+                              Navigator.push(context,MaterialPageRoute(builder: (context){
+                                    return Login();
+                              
+                                    }));
+
+                              }
+                                 else{
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("Error,try again"))
+                                );
+                                 }
                         }
                       },
-                      child: Text("Submit"),
+  
+                        
+
+                         
+                          
+                    
+                      child: Text("Register"),
                       style: ButtonStyle(
                           backgroundColor:
                               MaterialStateProperty.all(Colors.purple),
@@ -196,6 +218,35 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
     );
+  }
+
+  void showsnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+         content: Text(message)));
+  }
+
+  Future<bool> register( String email, String password) async {
+    try{
+       UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: emailcontroller.text,
+      password: passcontroller.text,
+     
+    );
+
+     if(userCredential.user !=null){
+    return true;
+     }
+  }
+  
+  on FirebaseAuthException catch (e) {
+     if (e.code == 'weak-password') {
+  showsnackbar(context,"The password provided is too weak.");
+ } else if (e.code == 'email-already-in-use') {
+    showsnackbar(context,"The account already exists for that email." );
+                          }
+
+  } 
+    return false;
   }
 
   Widget togglePassword() {
